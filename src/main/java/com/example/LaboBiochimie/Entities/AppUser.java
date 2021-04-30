@@ -30,7 +30,7 @@ public class AppUser implements Serializable {
 	@JsonIgnore
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
 	private Patient patient;
-	private Roles role;
+	private String role;
 
 	public AppUser() {
 		super();
@@ -78,12 +78,11 @@ public class AppUser implements Serializable {
 		this.actived = actived;
 	}
 
-	public Roles getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(Roles role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
-
 }

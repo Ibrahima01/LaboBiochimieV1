@@ -1,5 +1,11 @@
 package com.example.LaboBiochimie.enums;
 
 public enum Roles {
-	PATIENT, PERSONNEL, ADMIN, SUPER_ADMIN
+	PATIENT ("PATIENT"),
+	PERSONNEL ("PERSONNEL"),
+	ADMIN ("ADMIN"),
+	SUPER_ADMIN ("SUPER_ADMIN");
+
+	Roles(String role) {
+	}
 }

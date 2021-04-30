@@ -39,7 +39,7 @@ public class RendezVousController {
     @GetMapping("/RDV/{id}")
     public Optional<RendezVous> getRDVById(@PathVariable Long Id){return rendezVvousService.findRDV(Id);}
     @GetMapping(value = "/findRDVByIdPatient/{id}")
-    public List<LocalDateTime> getRDVByIdPatient(@PathVariable (value="id") String id){return rendezVvousService.findRDVByIdPatient(Long.parseLong(id));}
+    public LocalDateTime getRDVByIdPatient(@PathVariable (value="id") String id){return rendezVvousService.findRDVByIdPatient(Long.parseLong(id)).get(rendezVvousService.findRDVByIdPatient(Long.parseLong(id)).size()-1);}
     @DeleteMapping("/RDV/{id}")
     public void deleteRDV(@PathVariable Long id){
         rendezVvousService.RemoveRDV(id);

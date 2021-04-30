@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "Personnel")
+@Table(name = "RDV")
 public class RendezVous implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

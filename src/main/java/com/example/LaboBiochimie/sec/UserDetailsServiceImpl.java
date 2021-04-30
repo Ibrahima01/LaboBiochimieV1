@@ -26,7 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		if (appUser == null)
 			throw new UsernameNotFoundException("invalid user");
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(appUser.getRole().toString()));
+		System.out.print("Role: "+appUser.getRole());
+		if (appUser.getRole()!=null)
+			authorities.add(new SimpleGrantedAuthority(appUser.getRole().toString()));
 		return new User(appUser.getUsername(), appUser.getPassword(), authorities);
 	}
 }

@@ -22,6 +22,10 @@ public class Patient implements Serializable {
 	private String nom_Patient;
 	@NonNull
 	private String prenom_Patient;
+	private int age;
+	private String sexe;
+	private boolean obese;
+	private boolean femme_enceinte;
 	private String commentaires;
 	private String tel;
 	// @Lob
@@ -29,13 +33,6 @@ public class Patient implements Serializable {
 	@OneToOne
 	private AppUser user;
 
-	public Patient(@NonNull String nom_Patient, @NonNull String prenom_Patient, String tel, AppUser user) {
-		super();
-		this.nom_Patient = nom_Patient;
-		this.prenom_Patient = prenom_Patient;
-		this.tel = tel;
-		this.user = user;
-	}
 	// @OneToMany (mappedBy = "RDVPatient", cascade = CascadeType.ALL)
 	// private Set<Rendez_vous> Rendez_vous_patient=new HashSet<>();
 
@@ -92,8 +89,39 @@ public class Patient implements Serializable {
 		this.user = appUser;
 	}
 
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public boolean isObese() {
+		return obese;
+	}
+
+	public void setObese(boolean obese) {
+		this.obese = obese;
+	}
+
 	public Patient() {
 		super();
 	}
 
+	public boolean isFemme_enceinte() {
+		return femme_enceinte;
+	}
+
+	public void setFemme_enceinte(boolean femme_enceinte) {
+		this.femme_enceinte = femme_enceinte;
+	}
+
+	public String getSexe() {
+		return sexe;
+	}
+
+	public void setSexe(String sexe) {
+		this.sexe = sexe;
+	}
 }

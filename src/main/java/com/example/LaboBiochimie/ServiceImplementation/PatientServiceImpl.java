@@ -23,7 +23,7 @@ public class PatientServiceImpl implements PatientService {
 	public void SavePatient(Patient patient) {
 		AppUser user = patient.getUser();
 		if (user != null) {
-			user.setRole(Roles.PATIENT);
+			user.setRole(Roles.PATIENT.toString());
 		}
 		user = appUserService.SaveUser(patient.getUser());
 		patient.setUser(user);
