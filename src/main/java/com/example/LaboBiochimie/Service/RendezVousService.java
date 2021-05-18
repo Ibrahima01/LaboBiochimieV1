@@ -14,7 +14,7 @@ public interface RendezVousService {
     RendezVous PatientPrendRDV(Patient patient);
     RendezVous PatientPrendRDVById(Long id);
     void PersonnelPrendRDV(Personnel personnel);
-    void AdminPrendRDV(Admin admin);
+    public RendezVous AdminPrendRDVById(Long Id);
     void UpdateRDV (Long Id, RendezVous rendez_vous);
     List<RendezVous> ListRDV();
     void RemoveRDV (Long id);

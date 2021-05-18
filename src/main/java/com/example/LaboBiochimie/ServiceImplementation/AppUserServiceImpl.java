@@ -1,5 +1,7 @@
 package com.example.LaboBiochimie.ServiceImplementation;
 
+import com.example.LaboBiochimie.Entities.Patient;
+import com.example.LaboBiochimie.Repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +24,8 @@ public class AppUserServiceImpl implements AppUserService {
 	AppUserRepository appUserRepository;
 	@Autowired
 	AppRoleRepository appRoleRepository;
+	@Autowired
+	PatientRepository patientRepository;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -68,4 +72,16 @@ public class AppUserServiceImpl implements AppUserService {
 		AppUser appUser = appUserRepository.findByUsername(username);
 		AppRole appRole = appRoleRepository.findByRoleName(rolename);
 	}
+
+	/*
+	@Override
+	public Patient findPatientByUsername(String username){
+	AppUser appuser=appUserRepository.findByUsername(username);
+	Patient patient=appuser.getPatient();
+	for (Patient p:patientRepository.findAll()){
+		if(p.getId()==patient.getId())
+			patient=p;
+	}
+	return patient;}
+	 */
 }

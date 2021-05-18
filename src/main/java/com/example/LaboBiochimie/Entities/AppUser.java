@@ -30,6 +30,8 @@ public class AppUser implements Serializable {
 	@JsonIgnore
 	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
 	private Patient patient;
+	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+	private Admin admin;
 	private String role;
 
 	public AppUser() {
@@ -84,5 +86,13 @@ public class AppUser implements Serializable {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	public Admin getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Admin admin) {
+		this.admin = admin;
 	}
 }

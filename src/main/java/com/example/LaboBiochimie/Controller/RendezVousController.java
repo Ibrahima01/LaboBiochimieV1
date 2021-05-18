@@ -27,8 +27,12 @@ public class RendezVousController {
         return rendezVvousService.PatientPrendRDV(patient);
     }
     @PostMapping("/patientPrendRDVById/{id}")
-    public RendezVous patientPrendRDVById(@PathVariable Long id){
-        return rendezVvousService.PatientPrendRDVById(id);
+    public RendezVous patientPrendRDVById(@PathVariable String id){
+        return rendezVvousService.PatientPrendRDVById( Long.parseLong(id));
+    }
+    @PostMapping("/adminPrendRDVById/{id}")
+    public RendezVous adminPrendRDVById(@PathVariable Long id){
+        return rendezVvousService.AdminPrendRDVById(id);
     }
     @PutMapping("/RDV/{id}")
     public void modifyRDV(@PathVariable Long id, @Validated @RequestBody RendezVous rdv1){
@@ -39,7 +43,10 @@ public class RendezVousController {
     @GetMapping("/RDV/{id}")
     public Optional<RendezVous> getRDVById(@PathVariable Long Id){return rendezVvousService.findRDV(Id);}
     @GetMapping(value = "/findRDVByIdPatient/{id}")
-    public LocalDateTime getRDVByIdPatient(@PathVariable (value="id") String id){return rendezVvousService.findRDVByIdPatient(Long.parseLong(id)).get(rendezVvousService.findRDVByIdPatient(Long.parseLong(id)).size()-1);}
+    public LocalDateTime getRDVByIdPatient(@PathVariable (value="id") String id){
+        return rendezVvousService.findRDVByIdPatient(Long.parseLong(id))
+                .get(rendezVvousService.findRDVByIdPatient(Long.parseLong(id)).size()-1);
+    }
     @DeleteMapping("/RDV/{id}")
     public void deleteRDV(@PathVariable Long id){
         rendezVvousService.RemoveRDV(id);

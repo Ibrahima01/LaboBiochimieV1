@@ -43,7 +43,6 @@ public class PatientServiceImpl implements PatientService {
 			newPatient.setTel(patient.getTel());/*
 												 * newPatient.setPhotoPatient(patient.getPhotoPatient());
 												 */
-			newPatient.setCommentaires(patient.getCommentaires());
 			patientRepository.save(newPatient);
 		}
 	}
@@ -61,5 +60,10 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Optional<Patient> findPatient(Long Id) {
 		return patientRepository.findById(Id);
+	}
+
+	@Override
+	public Optional<Patient> findPatientByUser(AppUser user) {
+		return patientRepository.findByUser(user);
 	}
 }

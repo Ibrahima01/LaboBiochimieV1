@@ -1,5 +1,6 @@
 package com.example.LaboBiochimie.Service;
 
+import com.example.LaboBiochimie.Entities.AppUser;
 import com.example.LaboBiochimie.Entities.Patient;
 
 import java.util.List;
@@ -11,4 +12,5 @@ public interface PatientService {
     List<Patient> ListPatients();
     void RemovePatient(Long Id);
     public Optional<Patient> findPatient(Long Id);
+    public Optional<Patient> findPatientByUser(AppUser user);
 }

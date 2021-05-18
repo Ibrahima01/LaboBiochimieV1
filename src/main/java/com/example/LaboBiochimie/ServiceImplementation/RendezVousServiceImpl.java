@@ -1,9 +1,7 @@
 package com.example.LaboBiochimie.ServiceImplementation;
 
-import com.example.LaboBiochimie.Entities.Admin;
-import com.example.LaboBiochimie.Entities.Patient;
-import com.example.LaboBiochimie.Entities.Personnel;
-import com.example.LaboBiochimie.Entities.RendezVous;
+import com.example.LaboBiochimie.Entities.*;
+import com.example.LaboBiochimie.Repository.AdminRepository;
 import com.example.LaboBiochimie.Repository.PatientRepository;
 import com.example.LaboBiochimie.Repository.RendezVousRepository;
 import com.example.LaboBiochimie.Service.RendezVousService;
@@ -22,6 +20,8 @@ public class RendezVousServiceImpl implements RendezVousService {
     RendezVousRepository rendez_vousRepository;
     @Autowired
     PatientRepository patientRepository;
+    @Autowired
+    AdminRepository adminRepository;
     @Override
     public void SaveRDV(RendezVous rendez_vous){
         rendez_vousRepository.save(rendez_vous);
@@ -79,7 +79,7 @@ public class RendezVousServiceImpl implements RendezVousService {
     public LocalDateTime calculDateHeureRDV(Date date, Long time){
         return convertToLocalDateTime(date);
     }
-    public long tempPrelevement(Patient p){
+    public int tempPrelevement(Patient p){
         if (p.getAge()<=2)
             return 15;
         else {
@@ -96,10 +96,9 @@ public class RendezVousServiceImpl implements RendezVousService {
                 }
             }
         }
-
     }
-    public Long calculerTempsRestant(Date jour, int numBox){
-        long t=0;
+    public int calculerTempsRestant(Date jour, int numBox){
+        int t=0;
         for (RendezVous rdv:rendez_vousRepository.findAll()){
             if (jour.equals(convertToDateViaInstant(rdv.getDate_heure_RDV())) && numBox==rdv.getNumero_box()){
                 for (Patient p:patientRepository.findAll()){
@@ -115,10 +114,10 @@ public class RendezVousServiceImpl implements RendezVousService {
     }
     public static ArrayList<Integer> TableauInfirmierAdmissible= new ArrayList<>(10);
     public static Hashtable<Date,Long> dates=new Hashtable<Date, Long>();
-    public int NombrePatientParBox(int numBox, LocalDateTime date){
+    public int NombrePatientParBox(int numBox, Date date){
         int cpt=0;
         for (RendezVous rdv:rendez_vousRepository.findAll()){
-            if (rdv.getNumero_box()==numBox && convertToDateViaInstant(rdv.getDate_heure_RDV()).equals(convertToDateViaInstant(date)))
+            if (rdv.getNumero_box()==numBox && convertToDateViaInstant(rdv.getDate_heure_RDV()).equals(date))
                 cpt++;
         }
         return cpt;
@@ -131,56 +130,116 @@ public class RendezVousServiceImpl implements RendezVousService {
         }
         return min;
     }
-    public void Equite(RendezVous rdv){
-        //boolean equite;
-        TableauInfirmierAdmissible.clear();
-        TableauInfirmierAdmissible.add(NombrePatientParBox(1, rdv.getDate_heure_RDV()));
-        TableauInfirmierAdmissible.add(NombrePatientParBox(2, rdv.getDate_heure_RDV()));
-        TableauInfirmierAdmissible.add(NombrePatientParBox(3, rdv.getDate_heure_RDV()));
-        TableauInfirmierAdmissible.add(NombrePatientParBox(4, rdv.getDate_heure_RDV()));
-        int min=PositionBoxMinPatient(TableauInfirmierAdmissible);
-        if (TableauInfirmierAdmissible.get(min)<40) {
-            rdv.setNumero_box(min+1);
+
+    @Override
+    public void PersonnelPrendRDV(Personnel personnel){
+
+    }
+    @Override
+    public List<LocalDateTime> findRDVByIdPatient(Long Id){
+        List<RendezVous> list=rendez_vousRepository.findAll();
+        List<LocalDateTime> list2=new ArrayList<LocalDateTime>();
+        for (RendezVous rdv: list){
+            if(rdv.getRDVPatient().getId()==Id){
+                list2.add(rdv.getDate_heure_RDV());
+            }
         }
-        else
+        return list2;
+    }
+    //Chercher les boxs qui sont disponibles par jours
+    public ArrayList<Box> ChercherBoxDispoParDate(Date jour){
+        ArrayList<Box> L = new ArrayList<Box>();
+        int i=0;
+        Box box=new Box();
+        for (i=0; i<4; i++){
+            if (NombrePatientParBox(i+1,jour)<40) {
+                box.setNombrePatient(NombrePatientParBox(i + 1, jour));
+                box.setNumeroBox(i+1);
+                box.setTempRestant(calculerTempsRestant(jour,i+1));
+                box.afficherBox();
+                L.add(box);
+            }
+        }
+        return L;
+    }
+    //Retourne le numéro de box ayant le minimum de patient
+    public int numBoxMinPatient(Date jour){
+        ArrayList<Box> T=ChercherBoxDispoParDate(jour);
+        int pos=0;
+        if (!T.isEmpty())
         {
-            rdv.setDate_heure_RDV(rdv.getDate_heure_RDV().plusDays(1));
-            rdv.setNumero_box(1);
-            TableauInfirmierAdmissible.clear();
+            System.out.print("Pour la date "+jour+": ");
+            int min= T.get(0).getNombrePatient();
+            for (int i=1;i<T.size();i++)
+            {
+                Box box=T.get(i);
+                if (box.getNombrePatient()<min && box.getTempRestant()>0)
+                {
+                    min=box.getNombrePatient();
+                    pos=box.getNumeroBox();
+                }
+            }
         }
+        System.out.print(pos);
+        return pos;
+    }
+    ///Calculer le temps de prélèvement du dernier patient d'un box donné
+    public int TempPrelDernierPatiBox(int numBox){
+        Patient patient=new Patient();
+        for(RendezVous rdv: rendez_vousRepository.findAll())
+        {
+            if (rdv.getNumero_box()==numBox)
+            {
+                patient=rdv.getRDVPatient();
+            }
+        }
+        return tempPrelevement(patient);
+    }
+    //Récupérer la date et l'heure du dernier rdv d'un box donné
+    public LocalDateTime DernierHeurRdvBox(int numBox){
+        LocalDateTime heureRdv=LocalDateTime.now();
+        for(RendezVous rdv: rendez_vousRepository.findAll())
+        {
+            if (rdv.getNumero_box()==numBox)
+            {
+                heureRdv=rdv.getDate_heure_RDV();
+            }
+        }
+        return heureRdv;
+    }
+    //Ajouter un nouveau rendez-vous à un patient p
+    public RendezVous ajoutRdv(Patient p){
+        int numBox=(rendez_vousRepository.findAll().get(rendez_vousRepository.findAll().size()-1).getNumero_box()+1)%4;
+        if (numBox == 0) {
+            numBox = 4;
+        }
+        RendezVous rendezVous=new RendezVous();
+        rendezVous.setNumero_box(numBox);
+        rendezVous.setDate_heure_RDV(DernierHeurRdvBox(numBox).plusMinutes(TempPrelDernierPatiBox(numBox)));
+        if (rendezVous.getDate_heure_RDV().getHour()>14)
+        {
+            rendezVous.setDate_heure_RDV(rendezVous.getDate_heure_RDV().plusDays(1).withHour(8));
+            rendezVous.setNumero_box(1);
+        }
+        rendezVous.setRDVPatient(p);
+        return rendezVous;
     }
     @Override
     public RendezVous PatientPrendRDV(Patient patient){
         RendezVous rdv=new RendezVous();
+        return rdv;
+    }
+
+    @Override
+    public RendezVous PatientPrendRDVById(Long id){
+        RendezVous rdv = new RendezVous();
+        Patient patient=patientRepository.findById(id).get();
         Date date=new Date();
         Long tempsRestant;
-        Long tempsPrelevement=tempPrelevement(patient);
+        int tempsPrelevement=tempPrelevement(patient);
         int i=0;
         //ArrayList<Long> tempsRestant=new ArrayList();
-        for (RendezVous ldt: rendez_vousRepository.findAll()){
-            date=convertToDateViaInstant(ldt.getDate_heure_RDV());
-            TableauInfirmierAdmissible.clear();
-            TableauInfirmierAdmissible.add(NombrePatientParBox(1, ldt.getDate_heure_RDV()));
-            TableauInfirmierAdmissible.add(NombrePatientParBox(2, ldt.getDate_heure_RDV()));
-            TableauInfirmierAdmissible.add(NombrePatientParBox(3, ldt.getDate_heure_RDV()));
-            TableauInfirmierAdmissible.add(NombrePatientParBox(4, ldt.getDate_heure_RDV()));
-            int min=PositionBoxMinPatient(TableauInfirmierAdmissible);
-            if (TableauInfirmierAdmissible.get(min)<40) {
-                rdv.setDate_heure_RDV(ldt.getDate_heure_RDV().plusMinutes(tempsPrelevement));
-                rdv.setNumero_box(min+1);
-                break;
-            }
-            else
-            {
-                rdv.setDate_heure_RDV(rdv.getDate_heure_RDV().plusDays(1));
-                rdv.setNumero_box(1);
-                //TableauInfirmierAdmissible.clear();
-            }
-        }
-        if (i==rendez_vousRepository.findAll().size()){
-            date=convertToDateViaInstant(convertToLocalDateTime(date).plusDays(1));
-            //date = date.getTime()+(1000 * 60 * 60 * 24);
-        }
+        rdv=ajoutRdv(patient);
         //Equite(rdv);
         GregorianCalendar calendar=new GregorianCalendar();
         calendar.setTime(java.util.Date.from(rdv.getDate_heure_RDV().atZone(ZoneId.systemDefault()).toInstant()));
@@ -221,71 +280,17 @@ public class RendezVousServiceImpl implements RendezVousService {
         return rdv;
     }
     @Override
-    public void PersonnelPrendRDV(Personnel personnel){
-
-    }
-    @Override
-    public void AdminPrendRDV(Admin admin){
-
-    }
-    @Override
-    public List<LocalDateTime> findRDVByIdPatient(Long Id){
-        List<RendezVous> list=rendez_vousRepository.findAll();
-        List<LocalDateTime> list2=new ArrayList<LocalDateTime>();
-        for (RendezVous rdv: list){
-            if(rdv.getRDVPatient().getId()==Id){
-                list2.add(rdv.getDate_heure_RDV());
-            }
-        }
-        return list2;
-    }
-    @Override
-    public RendezVous PatientPrendRDVById(Long id){
+    public RendezVous AdminPrendRDVById(Long Id){
         RendezVous rdv = new RendezVous();
         /*
-        if (patientRepository.findById(id).isEmpty()){
-            //System.out.println("Patient inexistant");
-            return rdv;
-        }
-        else {
-            int numBox=(rendez_vousRepository.findAll().get(rendez_vousRepository.findAll().size()-1).getNumero_box()+1)%4;
-            if (numBox == 0) {
-                numBox = 4;
-            }
-            rdv.setNumero_box(numBox);
-            rdv.setDate_heure_RDV(LocalDateTime.now().plusDays(5));
-            GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTime(java.util.Date.from(rdv.getDate_heure_RDV().atZone(ZoneId.systemDefault()).toInstant()));
-            Patient p = patientRepository.findById(id).get();//.get(0);;
-            rdv.setRDVPatient(p);
-        }
-        rendez_vousRepository.save(rdv);
-        return rdv;
-         */
-        Patient patient=patientRepository.findById(id).get();
+        Admin admin=adminRepository.findById(Id).get();
         Date date=new Date();
         Long tempsRestant;
-        Long tempsPrelevement=tempPrelevement(patient);
+        int tempsPrelevement=tempPrelevement(admin);
         int i=0;
         //ArrayList<Long> tempsRestant=new ArrayList();
-        for (RendezVous ldt: rendez_vousRepository.findAll()){
-            date=convertToDateViaInstant(ldt.getDate_heure_RDV());
-            for (int i1:TableauInfirmierAdmissible) {
-                tempsRestant = calculerTempsRestant(date, i1);
-                if (tempsRestant - tempsPrelevement > 0) {
-                    dates.put(date, tempsRestant - tempPrelevement(patient));
-                    rdv.setDate_heure_RDV(convertirMinuteEnHeureRDV(date, 1440 - tempsRestant));
-                    break;
-                } else
-                    i++;
-            }
-        }
-        if (i==rendez_vousRepository.findAll().size()){
-            date=convertToDateViaInstant(convertToLocalDateTime(date).plusDays(1));
-            //date = date.getTime()+(1000 * 60 * 60 * 24);
-            rdv.setDate_heure_RDV(convertirMinuteEnHeureRDV(date, 1440-tempsPrelevement));
-        }
-        Equite(rdv);
+        rdv=ajoutRdv(admin);
+        //Equite(rdv);
         GregorianCalendar calendar=new GregorianCalendar();
         calendar.setTime(java.util.Date.from(rdv.getDate_heure_RDV().atZone(ZoneId.systemDefault()).toInstant()));
         int today = calendar.get(calendar.DAY_OF_WEEK);
@@ -320,8 +325,9 @@ public class RendezVousServiceImpl implements RendezVousService {
         else if (indexOfToday==7){
             rdv.setDate_heure_RDV(rdv.getDate_heure_RDV().plusDays(1));
         }
-        rdv.setRDVPatient(patient);
+        rdv.setRDVPatient(admin);
         rendez_vousRepository.save(rdv);
+         */
         return rdv;
     }
 }

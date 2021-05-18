@@ -2,6 +2,7 @@ package com.example.LaboBiochimie.Service;
 
 import com.example.LaboBiochimie.Entities.AppRole;
 import com.example.LaboBiochimie.Entities.AppUser;
+import com.example.LaboBiochimie.Entities.Patient;
 
 public interface AppUserService {
 	public AppUser SaveUser(AppUser appUser);
@@ -17,4 +18,6 @@ public interface AppUserService {
 	public AppRole save(AppRole role);
 
 	public void addRoleToUser(String username, String rolename);
+
+	//public Patient findPatientByUsername(String username);
 }

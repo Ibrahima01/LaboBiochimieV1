@@ -10,6 +10,11 @@ public class Box {
         this.nombrePatient = nombrePatient;
         this.tempRestant = tempRestant;
     }
+    public void afficherBox(){
+        System.out.print("\nnumero de box: "+this.numeroBox+"\n");
+        System.out.print("nombre de patient: "+this.nombrePatient+"\n");
+        System.out.print("Temps restant: "+this.tempRestant+"\n");
+    }
     public Box(){
         super();
     }

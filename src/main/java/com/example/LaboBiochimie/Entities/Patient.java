@@ -26,7 +26,6 @@ public class Patient implements Serializable {
 	private String sexe;
 	private boolean obese;
 	private boolean femme_enceinte;
-	private String commentaires;
 	private String tel;
 	// @Lob
 	// private byte[] photoPatient;
@@ -60,13 +59,6 @@ public class Patient implements Serializable {
 	 * public User getUser() { return user; } public void setUser(User user) {
 	 * this.user = user; }
 	 */
-	public String getCommentaires() {
-		return commentaires;
-	}
-
-	public void setCommentaires(String commentaires) {
-		this.commentaires = commentaires;
-	}
 
 	public String getTel() {
 		return tel;

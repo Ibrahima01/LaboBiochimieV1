@@ -1,6 +1,7 @@
 package com.example.LaboBiochimie.ServiceImplementation;
 
 import com.example.LaboBiochimie.Entities.Admin;
+import com.example.LaboBiochimie.Entities.AppUser;
 import com.example.LaboBiochimie.Repository.AdminRepository;
 import com.example.LaboBiochimie.Service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Optional<Admin> findAdmin(Long Id){
         return  adminRepository.findById(Id);
+    }
+
+    @Override
+    public Optional<Admin> findAdminByUser(AppUser user) {
+        return adminRepository.findByUser(user);
     }
 }
