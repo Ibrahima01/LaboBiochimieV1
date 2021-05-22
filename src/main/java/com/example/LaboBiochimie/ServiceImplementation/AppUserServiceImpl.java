@@ -2,6 +2,7 @@ package com.example.LaboBiochimie.ServiceImplementation;
 
 import com.example.LaboBiochimie.Entities.Patient;
 import com.example.LaboBiochimie.Repository.PatientRepository;
+import com.example.LaboBiochimie.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,10 +32,10 @@ public class AppUserServiceImpl implements AppUserService {
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	@Override
-	public AppUser SaveUser(AppUser appUser) {
+	public AppUser SaveUser(AppUser appUser) throws UserException {
 		AppUser user = appUserRepository.findByUsername(appUser.getUsername());
 		if (user != null)
-			throw new RuntimeException("User already exists");
+			throw new UserException(appUser.getUsername() + " existe dèjà");
 		appUser.setPassword(bCryptPasswordEncoder.encode(appUser.getPassword()));
 		appUser.setActived(true);
 		appUserRepository.save(appUser);

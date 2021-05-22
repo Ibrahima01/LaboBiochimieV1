@@ -2,14 +2,14 @@ package com.example.LaboBiochimie.dto;
 
 import com.example.LaboBiochimie.Entities.AppUser;
 
-public class Personne {
+public class PersonneDto {
     private String nom;
     private String prenom;
     private AppUser  user;
 
-    public  Personne(){super();}
+    public  PersonneDto(){super();}
 
-    public Personne(String nom, String prenom, AppUser user) {
+    public PersonneDto(String nom, String prenom, AppUser user) {
         this.nom = nom;
         this.prenom = prenom;
         this.user = user;

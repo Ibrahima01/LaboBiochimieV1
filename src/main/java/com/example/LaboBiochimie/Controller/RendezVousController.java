@@ -40,15 +40,23 @@ public class RendezVousController {
     }
     @GetMapping("/all")
     public List<RendezVous> listRDV(){return rendezVvousService.ListRDV();}
-    @GetMapping("/RDV/{id}")
+    @GetMapping("/getRDVById/{id}")
     public Optional<RendezVous> getRDVById(@PathVariable Long Id){return rendezVvousService.findRDV(Id);}
     @GetMapping(value = "/findRDVByIdPatient/{id}")
     public LocalDateTime getRDVByIdPatient(@PathVariable (value="id") String id){
         return rendezVvousService.findRDVByIdPatient(Long.parseLong(id))
                 .get(rendezVvousService.findRDVByIdPatient(Long.parseLong(id)).size()-1);
     }
-    @DeleteMapping("/RDV/{id}")
+    @GetMapping("/historique/{id}")
+    public List<RendezVous> historiqueRDVPatient(@PathVariable Long id){
+        return rendezVvousService.historiqueRDVPatient(id);
+    }
+    @PostMapping("/deleteRDV/{id}")
     public void deleteRDV(@PathVariable Long id){
         rendezVvousService.RemoveRDV(id);
+    }
+    @GetMapping("/findRDVByPatient/{id}")
+    public RendezVous findRDVousByPatient(@PathVariable Long id){
+        return rendezVvousService.findRDVByPatient(id);
     }
 }

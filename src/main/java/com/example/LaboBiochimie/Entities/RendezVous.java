@@ -15,7 +15,7 @@ public class RendezVous implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id_RDV;
+    private Long id_RDV;
     @NonNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", shape = JsonFormat.Shape.STRING)
     private LocalDateTime date_heure_RDV;
@@ -34,7 +34,7 @@ public class RendezVous implements Serializable {
     @JoinColumn(name="Admin_id", referencedColumnName="id")
     private Admin RDVAdmin;
 
-    public int getId_RDV() {
+    public Long getId_RDV() {
         return id_RDV;
     }
 

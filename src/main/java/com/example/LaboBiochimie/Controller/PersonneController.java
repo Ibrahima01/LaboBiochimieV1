@@ -7,7 +7,7 @@ import com.example.LaboBiochimie.Entities.Admin;
 import com.example.LaboBiochimie.Entities.Patient;
 import com.example.LaboBiochimie.Service.AdminService;
 import com.example.LaboBiochimie.Service.PatientService;
-import com.example.LaboBiochimie.dto.Personne;
+import com.example.LaboBiochimie.dto.PersonneDto;
 import com.example.LaboBiochimie.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +25,8 @@ public class PersonneController {
 	@Autowired
 	private AdminService adminService;
 	@GetMapping("/personne")
-	public Personne getUser(Principal p) {
-		Personne personne = new Personne();
+	public PersonneDto getUser(Principal p) {
+		PersonneDto personne = new PersonneDto();
 		AppUser user = accountService.loadUserByusername(p.getName());
 		personne.setUser(user);
 		if(user.getRole().equals(Roles.PATIENT.toString())){

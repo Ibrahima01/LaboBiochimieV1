@@ -1,6 +1,7 @@
 package com.example.LaboBiochimie.Controller;
 
 import com.example.LaboBiochimie.Entities.Commentaire;
+import com.example.LaboBiochimie.Entities.Patient;
 import com.example.LaboBiochimie.Service.CommentaireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -31,4 +32,6 @@ public class CommentaireController {
     public List<String> getReponseById(@PathVariable Long id){
         return commentaireService.getReponseById(id);
     }
+    @GetMapping("/getInfoPatient/{id}")
+    public Patient getInfoPatient(@PathVariable Long id){ return commentaireService.getInfoPatient(id); }
 }

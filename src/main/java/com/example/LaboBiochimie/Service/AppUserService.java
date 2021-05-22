@@ -3,9 +3,10 @@ package com.example.LaboBiochimie.Service;
 import com.example.LaboBiochimie.Entities.AppRole;
 import com.example.LaboBiochimie.Entities.AppUser;
 import com.example.LaboBiochimie.Entities.Patient;
+import com.example.LaboBiochimie.exception.UserException;
 
 public interface AppUserService {
-	public AppUser SaveUser(AppUser appUser);
+	public AppUser SaveUser(AppUser appUser) throws UserException;
 
 	public AppUser login(String email);
 

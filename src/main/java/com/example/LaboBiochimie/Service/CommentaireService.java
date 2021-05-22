@@ -1,6 +1,7 @@
 package com.example.LaboBiochimie.Service;
 
 import com.example.LaboBiochimie.Entities.Commentaire;
+import com.example.LaboBiochimie.Entities.Patient;
 import com.example.LaboBiochimie.Repository.CommentaireRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import java.util.List;
 public class CommentaireService {
     @Autowired
     CommentaireRepository commentaireRepository;
+    @Autowired
+    PatientService patientService;
     public void SaveCommentaire(Commentaire commentaire){
         commentaireRepository.save(commentaire);
     }
@@ -27,5 +30,10 @@ public class CommentaireService {
         //commentaire1.setReponse(commentaire1.getReponse());
         commentaire1.setId(id);
         commentaireRepository.save(commentaire1);
+    }
+    public Patient getInfoPatient(Long idCommentaire){
+        Commentaire commentaire=commentaireRepository.findById(idCommentaire).get();
+        Patient patient=commentaire.getPatient_commentaire();
+        return patient;
     }
 }

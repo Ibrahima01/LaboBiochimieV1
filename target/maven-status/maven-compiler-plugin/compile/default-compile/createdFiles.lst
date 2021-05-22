@@ -1,14 +1,15 @@
-com\example\LaboBiochimie\dto\Personne.class
 com\example\LaboBiochimie\Entities\Patient.class
 com\example\LaboBiochimie\Controller\AdminController.class
 com\example\LaboBiochimie\Entities\RendezVous.class
 com\example\LaboBiochimie\Repository\PatientRepository.class
 com\example\LaboBiochimie\Repository\PersonnelRepository.class
+com\example\LaboBiochimie\exception\ApplicationTokenExpired.class
 com\example\LaboBiochimie\Entities\Personnel.class
 com\example\LaboBiochimie\Controller\PersonneController.class
 com\example\LaboBiochimie\sec\UserDetailsServiceImpl.class
 com\example\LaboBiochimie\ServiceImplementation\AppUserServiceImpl.class
 com\example\LaboBiochimie\Repository\CommentaireRepository.class
+com\example\LaboBiochimie\dto\UserDto.class
 com\example\LaboBiochimie\Service\AdminService.class
 com\example\LaboBiochimie\sec\JWTAuthenticationFilter.class
 com\example\LaboBiochimie\Controller\ParametreController.class
@@ -24,6 +25,9 @@ com\example\LaboBiochimie\Entities\Commentaire.class
 com\example\LaboBiochimie\Service\AppUserService.class
 com\example\LaboBiochimie\Controller\RendezVousController.class
 com\example\LaboBiochimie\Entities\AppRole.class
+com\example\LaboBiochimie\dto\PatientDto.class
+com\example\LaboBiochimie\dto\PersonneDto.class
+com\example\LaboBiochimie\exception\UserException.class
 com\example\LaboBiochimie\Repository\AdminRepository.class
 com\example\LaboBiochimie\sec\SecurityParams.class
 com\example\LaboBiochimie\Controller\CommentaireController.class
@@ -39,6 +43,7 @@ com\example\LaboBiochimie\Repository\ParametreRepository.class
 com\example\LaboBiochimie\Service\CommentaireService.class
 com\example\LaboBiochimie\ServiceImplementation\AdminServiceImpl.class
 com\example\LaboBiochimie\Entities\Admin.class
+com\example\LaboBiochimie\Controller\ErrorController.class
 com\example\LaboBiochimie\ServiceImplementation\RendezVousServiceImpl.class
 com\example\LaboBiochimie\Service\RendezVousService.class
 com\example\LaboBiochimie\Constant\SecurityConstant.class

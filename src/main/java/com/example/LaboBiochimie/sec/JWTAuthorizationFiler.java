@@ -3,7 +3,10 @@ package com.example.LaboBiochimie.sec;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.LaboBiochimie.exception.ApplicationTokenExpired;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,7 +26,7 @@ import java.util.List;
 public class JWTAuthorizationFiler extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException, ApplicationTokenExpired  {
 
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers,authorization");
@@ -42,22 +45,29 @@ public class JWTAuthorizationFiler extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SecurityParams.SECRET)).build();
-            String jwt = jwtToken.substring(SecurityParams.HEADER_PREFIX.length());
-            DecodedJWT decodedJWT = verifier.verify(jwt);
-            System.out.println("JWT="+jwt);
-            String username = decodedJWT.getSubject();
-            List<String> roles = decodedJWT.getClaims().get("roles").asList(String.class);
-            System.out.println("username="+username);
-            System.out.println("roles="+roles);
-            Collection<GrantedAuthority> authorities = new ArrayList<>();
-            roles.forEach(rn -> {
-                authorities.add(new SimpleGrantedAuthority(rn));
-            });
-            UsernamePasswordAuthenticationToken user =
-                    new UsernamePasswordAuthenticationToken(username, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(user);
-            filterChain.doFilter(request, response);
+            try {
+
+                JWTVerifier verifier = JWT.require(Algorithm.HMAC256(SecurityParams.SECRET)).build();
+                String jwt = jwtToken.substring(SecurityParams.HEADER_PREFIX.length());
+                DecodedJWT decodedJWT = verifier.verify(jwt);
+
+                System.out.println("JWT=" + jwt);
+                String username = decodedJWT.getSubject();
+                List<String> roles = decodedJWT.getClaims().get("roles").asList(String.class);
+
+                System.out.println("username=" + username);
+                System.out.println("roles=" + roles);
+                Collection<GrantedAuthority> authorities = new ArrayList<>();
+                roles.forEach(rn -> {
+                    authorities.add(new SimpleGrantedAuthority(rn));
+                });
+                UsernamePasswordAuthenticationToken user =
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(user);
+                }catch (TokenExpiredException tokenExpiredException){
+                throw new ApplicationTokenExpired(tokenExpiredException.getMessage());
+                }
+                filterChain.doFilter(request, response);
         }
 
     }

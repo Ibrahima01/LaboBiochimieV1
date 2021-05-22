@@ -56,7 +56,15 @@ public class RendezVousServiceImpl implements RendezVousService {
     public List<RendezVous> findByDate(LocalDateTime date){
         return rendez_vousRepository.findAll().stream().filter(x->x.getDate_heure_RDV().toLocalDate().isEqual(date.toLocalDate())).collect(Collectors.toList());
     }
-
+    @Override
+    public  RendezVous findRDVByPatient(Long id){
+        RendezVous rdv=new RendezVous();
+        for (RendezVous rdv1:rendez_vousRepository.findAll()){
+            if (rdv1.getRDVPatient().getId()==id)
+                rdv=rdv1;
+        }
+        return  rdv;
+    }
     private Date convertToDateViaInstant(LocalDateTime dateToConvert) {
         return java.util.Date
                 .from(dateToConvert.atZone(ZoneId.systemDefault())
@@ -142,6 +150,17 @@ public class RendezVousServiceImpl implements RendezVousService {
         for (RendezVous rdv: list){
             if(rdv.getRDVPatient().getId()==Id){
                 list2.add(rdv.getDate_heure_RDV());
+            }
+        }
+        return list2;
+    }
+    @Override
+    public List<RendezVous> historiqueRDVPatient(Long Id){
+        List<RendezVous> list=rendez_vousRepository.findAll();
+        List<RendezVous> list2=new ArrayList<RendezVous>();
+        for (RendezVous rdv: list){
+            if(rdv.getRDVPatient().getId()==Id){
+                list2.add(rdv);
             }
         }
         return list2;

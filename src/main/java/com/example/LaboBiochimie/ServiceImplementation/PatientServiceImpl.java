@@ -3,6 +3,7 @@ package com.example.LaboBiochimie.ServiceImplementation;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.LaboBiochimie.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,8 @@ import com.example.LaboBiochimie.Repository.PatientRepository;
 import com.example.LaboBiochimie.Service.PatientService;
 import com.example.LaboBiochimie.enums.Roles;
 
+import javax.transaction.Transactional;
+
 @Service("PatientServiceImpl")
 public class PatientServiceImpl implements PatientService {
 	@Autowired
@@ -20,7 +23,8 @@ public class PatientServiceImpl implements PatientService {
 	AppUserServiceImpl appUserService;
 
 	@Override
-	public void SavePatient(Patient patient) {
+	@Transactional
+	public void SavePatient(Patient patient) throws UserException {
 		AppUser user = patient.getUser();
 		if (user != null) {
 			user.setRole(Roles.PATIENT.toString());

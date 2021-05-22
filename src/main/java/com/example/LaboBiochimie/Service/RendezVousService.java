@@ -21,5 +21,7 @@ public interface RendezVousService {
     public Optional<RendezVous> findRDV(Long Id);
     List<RendezVous>findByDate(LocalDateTime date);
     List<LocalDateTime> findRDVByIdPatient(Long Id);
+    List<RendezVous> historiqueRDVPatient(Long Id);
+    RendezVous findRDVByPatient(Long id);
 
 }

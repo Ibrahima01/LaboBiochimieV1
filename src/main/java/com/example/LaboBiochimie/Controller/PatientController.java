@@ -3,6 +3,8 @@ package com.example.LaboBiochimie.Controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.LaboBiochimie.dto.PatientDto;
+import com.example.LaboBiochimie.exception.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,9 +28,9 @@ public class PatientController {
 	PatientService patientService;
 
 	@PostMapping("/newPatient")
-	public Patient addNewPatient(@Validated @RequestBody Patient p1) {
-		patientService.SavePatient(p1);
-		return p1;
+	public Patient addNewPatient(@Validated @RequestBody PatientDto p1) throws UserException {
+		patientService.SavePatient(p1.patientDtoToPatient());
+		return p1.patientDtoToPatient();
 	}
 
 	@PutMapping("/Patient/{id}")
