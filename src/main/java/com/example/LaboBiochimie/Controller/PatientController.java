@@ -54,7 +54,7 @@ public class PatientController {
 		return patientService.findPatient(Long.parseLong(id));
 	}
 
-	@DeleteMapping(value = "/deletePatient/{id}")
+	@PostMapping(value = "/deletePatient/{id}")
 	public void deletePatient(@PathVariable Long id) {
 		patientService.RemovePatient(id);
 	}

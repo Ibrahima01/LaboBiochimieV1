@@ -105,6 +105,26 @@ public class RendezVousServiceImpl implements RendezVousService {
             }
         }
     }
+    /*
+    public int tempPrelevementAdmin(Admin admin){
+        if (admin.getAge()<=2)
+            return 15;
+        else {
+            if (p.getAge()<=12)
+                return 10;
+            else {
+                if (p.getSexe().equals("Feminin") && p.isFemme_enceinte())
+                    return 192;
+                else {
+                    if (p.isObese())
+                        return 5;
+                    else
+                        return 3;
+                }
+            }
+        }
+    }
+     */
     public int calculerTempsRestant(Date jour, int numBox){
         int t=0;
         for (RendezVous rdv:rendez_vousRepository.findAll()){
@@ -243,6 +263,22 @@ public class RendezVousServiceImpl implements RendezVousService {
         rendezVous.setRDVPatient(p);
         return rendezVous;
     }
+    public RendezVous ajoutRdvAdmin(Admin admin){
+        int numBox=(rendez_vousRepository.findAll().get(rendez_vousRepository.findAll().size()-1).getNumero_box()+1)%4;
+        if (numBox == 0) {
+            numBox = 4;
+        }
+        RendezVous rendezVous=new RendezVous();
+        rendezVous.setNumero_box(numBox);
+        rendezVous.setDate_heure_RDV(DernierHeurRdvBox(numBox).plusMinutes(TempPrelDernierPatiBox(numBox)));
+        if (rendezVous.getDate_heure_RDV().getHour()>14)
+        {
+            rendezVous.setDate_heure_RDV(rendezVous.getDate_heure_RDV().plusDays(1).withHour(8));
+            rendezVous.setNumero_box(1);
+        }
+        rendezVous.setRDVAdmin(admin);
+        return rendezVous;
+    }
     @Override
     public RendezVous PatientPrendRDV(Patient patient){
         RendezVous rdv=new RendezVous();
@@ -301,14 +337,13 @@ public class RendezVousServiceImpl implements RendezVousService {
     @Override
     public RendezVous AdminPrendRDVById(Long Id){
         RendezVous rdv = new RendezVous();
-        /*
         Admin admin=adminRepository.findById(Id).get();
         Date date=new Date();
         Long tempsRestant;
-        int tempsPrelevement=tempPrelevement(admin);
+        int tempsPrelevement=5;
         int i=0;
         //ArrayList<Long> tempsRestant=new ArrayList();
-        rdv=ajoutRdv(admin);
+        rdv=ajoutRdvAdmin(admin);
         //Equite(rdv);
         GregorianCalendar calendar=new GregorianCalendar();
         calendar.setTime(java.util.Date.from(rdv.getDate_heure_RDV().atZone(ZoneId.systemDefault()).toInstant()));
@@ -344,9 +379,8 @@ public class RendezVousServiceImpl implements RendezVousService {
         else if (indexOfToday==7){
             rdv.setDate_heure_RDV(rdv.getDate_heure_RDV().plusDays(1));
         }
-        rdv.setRDVPatient(admin);
+        rdv.setRDVAdmin(admin);
         rendez_vousRepository.save(rdv);
-         */
         return rdv;
     }
 }
